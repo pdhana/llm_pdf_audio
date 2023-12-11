@@ -12,8 +12,8 @@ from langchain.vectorstores import FAISS
 from langchain.llms import OpenAI
 from langchain.chains.question_answering import load_qa_chain
 from langchain.callbacks import get_openai_callback
-import whisper, openai
-
+import whisper
+import openai
 
 # Sidebar contents
 with st.sidebar:
@@ -42,11 +42,12 @@ def audio_file(audio):
         result = openai.Audio.transcribe("whisper-1", audio, verbose=True)
         st.write(result["text"])
 
+
 def pdf_file(pdf):
-        # st.write(pdf)
+    # st.write(pdf)
     if pdf is not None:
         pdf_reader = PdfReader(pdf)
-        
+
         text = ""
         for page in pdf_reader.pages:
             text += page.extract_text()
@@ -55,7 +56,7 @@ def pdf_file(pdf):
             chunk_size=1000,
             chunk_overlap=200,
             length_function=len
-            )
+        )
         chunks = text_splitter.split_text(text=text)
 
         # # embeddings
@@ -88,15 +89,16 @@ def pdf_file(pdf):
             with get_openai_callback() as cb:
                 response = chain.run(input_documents=docs, question=query)
                 print(cb)
-                st.write( cb ) 
+                st.write(cb)
             st.write(response)
+
 
 def main():
     st.header("A.B.A Admin Dashboard 💬")
 
     # upload a PDF file
-    pdf = st.file_uploader("Upload your PDF", type='pdf' )
-    pdf_file( pdf)
+    pdf = st.file_uploader("Upload your PDF", type='pdf')
+    pdf_file(pdf)
 
     # upload a Audio file
     audio = st.file_uploader("Upload an audio file", type=["mp3"])
@@ -105,5 +107,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
